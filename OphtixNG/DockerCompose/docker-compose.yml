@@ -1,0 +1,47 @@
+services:
+    web:
+        image: ghcr.io/ophtel/ophtixng/segur:latest
+        restart: on-failure
+        ports:
+            - "8030:80"
+            - "8031:443"
+        depends_on:
+            - db
+        environment:
+            MYSQL_HOST: db
+            MYSQL_USER: root
+            MYSQL_PASSWORD:
+            MYSQL_DATABASE: mariadb
+            RUNMAJ_OPTIONS: "-c -u"
+            RESEAU_LOCAL: "172."
+            RESEAU_LOCAL2: "192."
+            RESEAU_LOCAL3: "10."
+            OPHTIXDEV: 1
+        # volumes:
+            # - ./OphtixNG/:/var/www/html
+            # - ~/.gitconfig:/root/.gitconfig:ro
+    db:
+        image: mariadb:10.4
+        restart: on-failure
+        environment:
+           MYSQL_ROOT_PASSWORD: mariadb
+           MYSQL_DATABASE: mariadb
+           MYSQL_USER: mariadb
+           MYSQL_PASSWORD:
+        command: --sql_mode=""
+        volumes:
+           - "${PWD}/dump_ophtix.sql:/docker-entrypoint-initdb.d/dump_ophtix.sql"
+# for persistent db, create a volume
+#           - mydb:/var/lib/mysql
+
+    phpmyadmin:
+        image: phpmyadmin
+        restart: always
+        ports:
+            - 8032:80
+        environment:
+            - PMA_HOST=db
+
+# for persistent db add this volume config
+#volumes:
+              #  mydb:
