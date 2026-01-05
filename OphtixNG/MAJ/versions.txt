@@ -1,1 +1,1 @@
-majgrpccam=2026-01-06
+majgrpccam=2026-01-05
